@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Code Assistant</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+        }
+
+        #chat {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+
+        .user {
+            background: #2563eb;
+            margin-left: auto;
+        }
+
+        .bot {
+            background: #1e293b;
+        }
+
+        #inputBox {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="chat">
+    <h2>💀 AI Code Assistant</h2>
+
+    <div id="messages"></div>
+
+    <div id="inputBox">
+        <input id="query" placeholder="Ask something..." />
+        <button onclick="send()">Send</button>
+    </div>
+</div>
+
+<script>
+async function send() {
+    const queryInput = document.getElementById("query");
+    const query = queryInput.value;
+
+    if (!query) return;
+
+    addMessage(query, "user");
+
+    queryInput.value = "";
+
+    const res = await fetch("/ask", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query })
+    });
+
+    const data = await res.json();
+
+    addMessage(data.answer, "bot");
+}
+
+function addMessage(text, type) {
+    const messages = document.getElementById("messages");
+
+    const div = document.createElement("div");
+    div.className = "message " + type;
+    div.innerText = text;
+
+    messages.appendChild(div);
+
+    messages.scrollTop = messages.scrollHeight;
+}
+</script>
+
+</body>
+</html>
