@@ -20,10 +20,8 @@ templates = Jinja2Templates(directory="templates")
 # -----------------------------
 # Load & Prepare Data (Startup)
 # -----------------------------
-files = load_code_files("data/sample_project")
-chunks = chunk_code(files)
-index, texts = create_vector_store(chunks)
-
+index = None
+texts = None
 
 # -----------------------------
 # Request Schema
@@ -43,6 +41,9 @@ def home():
 
 @app.post("/ask")
 def ask_question(request: QueryRequest):
+    if index is None:
+        return {"error": "Model still loading, try again in few seconds"}
+
     query = request.query
 
     retrieved_chunks = search_query(query, index, texts)
@@ -62,3 +63,13 @@ def ui(request: Request):
         "index.html",
         {"request": request}
     )
+
+@app.on_event("startup")
+def load_model():
+    global index, texts
+
+    files = load_code_files("data/sample_project")
+    chunks = chunk_code(files)
+    index, texts = create_vector_store(chunks)
+
+    print("Model loaded successfully")
