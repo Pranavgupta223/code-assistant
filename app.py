@@ -38,23 +38,18 @@ class QueryRequest(BaseModel):
 def home():
     return {"message": "AI Code Assistant Running 🚀"}
 
+def load_system():
+    global index, texts
 
+    if index is None:
+        files = load_code_files("data/sample_project")
+        chunks = chunk_code(files)
+        index, texts = create_vector_store(chunks)
+
+        
 @app.post("/ask")
 def ask_question(request: QueryRequest):
-    if index is None:
-        return {"error": "Model still loading, try again in few seconds"}
-
-    query = request.query
-
-    retrieved_chunks = search_query(query, index, texts)
-    answer = generate_answer(query, retrieved_chunks)
-
-    return {
-        "query": query,
-        "answer": answer,
-        "retrieved_chunks": retrieved_chunks
-    }
-
+    load_system()
 
 @app.get("/ui", response_class=HTMLResponse)
 def ui(request: Request):
