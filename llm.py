@@ -1,16 +1,13 @@
 import os
 import google.generativeai as genai
 
-# Read API key from Railway environment variables
-api_key = os.getenv("AIzaSyCiL1-Ub9FFyjW3Ugv4fG102eLF_C7VnAk")
+api_key = os.getenv("GEMINI_API_KEY")
 
 if not api_key:
     raise ValueError("GEMINI_API_KEY is missing")
 
-# Configure Gemini
 genai.configure(api_key=api_key)
 
-# Load Gemini model
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 
@@ -32,5 +29,4 @@ Answer clearly and give examples if needed.
 """
 
     response = model.generate_content(prompt)
-
     return response.text
