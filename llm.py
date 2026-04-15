@@ -1,29 +1,36 @@
+import os
 import google.generativeai as genai
 
-# Replace with your actual API key
-client = genai.Client(api_key="AIzaSyCiL1-Ub9FFyjW3Ugv4fG102eLF_C7VnAk")
+# Read API key from Railway environment variables
+api_key = os.getenv("GEMINI_API_KEY")
 
-def generate_answer(query, context_chunks):
-    context = "\n\n".join(context_chunks)
+if not api_key:
+    raise ValueError("GEMINI_API_KEY is missing")
+
+# Configure Gemini
+genai.configure(api_key=api_key)
+
+# Load Gemini model
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+
+def generate_answer(query, retrieved_chunks):
+    context = "\n\n".join(retrieved_chunks)
 
     prompt = f"""
-You are a helpful coding assistant.
+You are a helpful AI code assistant.
 
-Context:
+Use the provided code context to answer the user's question.
+
+Code Context:
 {context}
 
-Question:
+User Question:
 {query}
 
-Answer clearly:
+Answer clearly and give examples if needed.
 """
 
-    try:
-        # The new SDK uses client.models.generate_content
-        response = client.models.generate_content(
-            model="gemini-2.5-flash", 
-            contents=prompt
-        )
-        return response.text
-    except Exception as e:
-        return f"Error generating response: {str(e)}"
+    response = model.generate_content(prompt)
+
+    return response.text
