@@ -1,4 +1,4 @@
-from google import genai
+import google.generativeai as genai
 
 # Replace with your actual API key
 client = genai.Client(api_key="AIzaSyCiL1-Ub9FFyjW3Ugv4fG102eLF_C7VnAk")
