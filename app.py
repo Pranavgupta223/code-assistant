@@ -2,12 +2,17 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from retriever import search_query
+from ingest import load_code_files, chunk_code
+from retriever import create_vector_store, search_query
 from llm import generate_answer
 
 app = FastAPI()
-
 templates = Jinja2Templates(directory="templates")
+
+# Load project once
+files = load_code_files("data/sample_project")
+chunks = chunk_code(files)
+index, texts = create_vector_store(chunks)
 
 
 class QueryRequest(BaseModel):
@@ -24,9 +29,15 @@ def ui(request: Request):
 
 @app.post("/ask")
 def ask(request: QueryRequest):
-    retrieved_chunks = search_query(request.query)
-    answer = generate_answer(request.query, retrieved_chunks)
+    try:
+        retrieved_chunks = search_query(request.query, index, texts)
+        answer = generate_answer(request.query, retrieved_chunks)
 
-    return {
-        "answer": answer
-    }
+        return {
+            "answer": answer
+        }
+
+    except Exception as e:
+        return {
+            "answer": f"Backend error: {str(e)}"
+        }
