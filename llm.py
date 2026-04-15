@@ -2,7 +2,7 @@ import os
 import google.generativeai as genai
 
 # Read API key from Railway environment variables
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("AIzaSyCiL1-Ub9FFyjW3Ugv4fG102eLF_C7VnAk")
 
 if not api_key:
     raise ValueError("GEMINI_API_KEY is missing")
