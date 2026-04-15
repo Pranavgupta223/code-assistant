@@ -1,6 +1,5 @@
 fastapi
 uvicorn
-sentence-transformers
-faiss-cpu==1.7.4
 google-generativeai
 jinja2
+pydantic

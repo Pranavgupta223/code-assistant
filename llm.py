@@ -1,7 +1,7 @@
 from google import genai
 
 # Replace with your actual API key
-client = genai.Client(api_key="AIzaSyAXRVSTcJ9Uf3jWCdYQNU-z6BuUu9YQVK4")
+client = genai.Client(api_key="AIzaSyCiL1-Ub9FFyjW3Ugv4fG102eLF_C7VnAk")
 
 def generate_answer(query, context_chunks):
     context = "\n\n".join(context_chunks)
