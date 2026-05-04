@@ -31,13 +31,16 @@ def ui(request: Request):
 def ask(request: QueryRequest):
     try:
         retrieved_chunks = search_query(request.query, index, texts)
+
+        if not retrieved_chunks:
+            return {"answer": "No relevant code found."}
+
         answer = generate_answer(request.query, retrieved_chunks)
 
-        return {
-            "answer": answer
-        }
+        if not answer:
+            return {"answer": "Model did not return a response."}
+
+        return {"answer": answer}
 
     except Exception as e:
-        return {
-            "answer": f"Backend error: {str(e)}"
-        }
+        return {"answer": f"Server error: {str(e)}"}

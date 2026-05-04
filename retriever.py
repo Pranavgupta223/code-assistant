@@ -8,15 +8,14 @@ def create_vector_store(chunks):
 
 
 def search_query(query, index, texts):
-    query = query.lower()
+    query_words = query.lower().split()
 
-    matched = []
+    scored = []
 
     for text in texts:
-        if any(word in text.lower() for word in query.split()):
-            matched.append(text)
+        score = sum(word in text.lower() for word in query_words)
+        scored.append((score, text))
 
-    if not matched:
-        matched = texts[:2]
+    scored.sort(reverse=True, key=lambda x: x[0])
 
-    return matched[:2]
+    return [text for score, text in scored[:3] if score > 0]

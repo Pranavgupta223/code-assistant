@@ -9,9 +9,10 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 
 
 def generate_answer(query, retrieved_chunks):
-    context = "\n\n".join(retrieved_chunks)
+    try:
+        context = "\n\n".join([str(c) for c in retrieved_chunks])
 
-    prompt = f"""
+        prompt = f"""
 You are a helpful AI code assistant.
 
 Code Context:
@@ -21,5 +22,9 @@ User Question:
 {query}
 """
 
-    response = model.generate_content(prompt)
-    return response.text
+        response = model.generate_content(prompt)
+
+        return response.text
+
+    except Exception as e:
+        return f"LLM error: {str(e)}"
